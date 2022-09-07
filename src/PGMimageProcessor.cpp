@@ -10,7 +10,7 @@
 #include "PGMimageProcessor.hpp"
 using namespace std;
 
-PGMimageProcessor::PGMimageProcessor(string inputFilename)
+PGMimageProcessor::PGMimageProcessor(argStructure args)
 {
     ;
 }

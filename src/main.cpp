@@ -9,6 +9,15 @@
 using namespace std;
 
 // ./out/findcomp -s 1 2 -t 3 -p -w out.pgm
+struct argStructure
+{
+    char *inFilename;
+    int argsRead;
+    int sizeArgs[2];
+    int threshArg[1];
+    bool printArg;
+    string writeArg;
+};
 
 bool fileExists(char *fileName)
 {
@@ -50,26 +59,27 @@ bool checkIntArgs(int argNum, int i, char *argv[], int *resArray)
 }
 int main(int argc, char *argv[])
 {
-    char *inFilename = argv[1];
-    int argsRead = 2;
-    int sArgs[2];
-    int tArg[1];
-    bool pArg;
-    string wArg;
+    // char *inFilename = argv[1];
+    // int argsRead = 2;
+    // int sizeArgs[2];
+    // int threshArg[1];
+    // bool printArg;
+    // string writeArg;
+    argStructure args;
     for (int i = 0; i < 2; i++)
     {
-        sArgs[i] = 0;
+        args.sizeArgs[i] = 0;
     }
     for (int i = 1; i < argc; i++)
     {
         if (strcmp(argv[i], "-t") == 0)
         {
-            argsRead += 2;
-            if (argc < argsRead)
+            args.argsRead += 2;
+            if (argc < args.argsRead)
             {
                 badArg();
             }
-            if (checkIntArgs(1, i, argv, tArg))
+            if (checkIntArgs(1, i, argv, args.threshArg))
             {
                 i += 1;
             }
@@ -80,12 +90,12 @@ int main(int argc, char *argv[])
         }
         if (strcmp(argv[i], "-s") == 0)
         {
-            argsRead += 3;
-            if (argc < argsRead)
+            args.argsRead += 3;
+            if (argc < args.argsRead)
             {
                 badArg();
             }
-            if (checkIntArgs(2, i, argv, sArgs))
+            if (checkIntArgs(2, i, argv, args.sizeArgs))
             {
                 i += 2;
             }
@@ -96,29 +106,29 @@ int main(int argc, char *argv[])
         }
         if (strcmp(argv[i], "-w") == 0)
         {
-            argsRead++;
-            if (argc < argsRead)
+            args.argsRead++;
+            if (argc < args.argsRead)
             {
                 badArg();
             }
-            wArg = argv[i + 1];
+            args.writeArg = argv[i + 1];
         }
         if (strcmp(argv[i], "-p") == 0)
         {
-            argsRead++;
-            if (argc < argsRead)
+            args.argsRead++;
+            if (argc < args.argsRead)
             {
                 badArg();
             }
-            pArg = argv[i + 1];
+            args.printArg = argv[i + 1];
         }
     }
     cout << "sArgs:" << endl;
     for (int i = 0; i < 2; i++)
     {
-        cout << sArgs[i] << endl;
+        cout << args.sizeArgs[i] << endl;
     }
-    PGMimageProcessor *a = new PGMimageProcessor(inFilename);
+    PGMimageProcessor *a = new PGMimageProcessor(args);
 
     // a->makeFrames(tResultArr, sResultArr, wResultVecArray, inFilename);
     // cout << (int)a->imageSequence[0][0][0];

@@ -5,11 +5,21 @@
 #include "connectedComponent.hpp"
 using namespace std;
 
+struct argStructure
+{
+    char *inFilename;
+    int argsRead;
+    int sizeArgs[2];
+    int threshArg[1];
+    bool printArg;
+    string writeArg;
+};
+
 class PGMimageProcessor
 {
 public:
     // what is the big 6?
-    PGMimageProcessor(string inputFilename);
+    PGMimageProcessor(argStructure args);
     ~PGMimageProcessor();
     int extractComponents(unsigned char threshold, int minValidSize);
     int filterComponentsBySize(int minSize, int maxSize);
