@@ -9,6 +9,7 @@ class connectedComponent
 {
 public:
    connectedComponent();
+   ~connectedComponent();
    // getters and setters
 
 private:

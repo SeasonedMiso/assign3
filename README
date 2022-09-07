@@ -1,5 +1,10 @@
 # assign3
 
+explaining what each file submitted does and
+how it fits into the program as a whole.
+
+---
+
 For this assignment, you are given a greyscale input image (PGM) and asked to provide
 an image processing class that can extract all the connected components for the image,
 given some user-supplied threshold. A connected component is a collection of image pixels
@@ -57,7 +62,7 @@ printComponentData}
 
 --
 Extract//
- The easiest is to start at the top left pixel of the
+The easiest is to start at the top left pixel of the
 image and scan along the image rows until you hit a foreground pixel. At that point
 you can start a Breadth First Search (BFS) to determine all 4-connected foreground
 pixels that are attached to this (this is effectively a ‘floodfill’ algorithm). Essentially,

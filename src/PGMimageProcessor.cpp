@@ -44,6 +44,7 @@ must be returned.
     // to create the output image.
 
     ;
+    return 0;
 }
 int PGMimageProcessor::filterComponentsBySize(int minSize, int maxSize)
 {
@@ -53,6 +54,7 @@ components and filter out (remove) all the components which do not
 obey the size criteria pass as arguments. The number remaining
 after this operation should be returned.
 */
+    return 0;
 }
 bool PGMimageProcessor::writeComponents(const std::string &outFileName)
 {
@@ -61,23 +63,27 @@ bool PGMimageProcessor::writeComponents(const std::string &outFileName)
 (255=component pixel, 0 otherwise) and write this to outFileName as a
 valid PGM. the return value indicates success of operation
 */
+    return false;
 }
 int PGMimageProcessor::getComponentCount(void) const
 {
     ;
     // return number of components
+    return 0;
 }
 int PGMimageProcessor::getLargestSize(void) const
 {
     ;
     // return number of pixels in largest component
+    return 0;
 }
 int PGMimageProcessor::getSmallestSize(void) const
 {
     ;
     // return number of pixels in smallest component
+    return 0;
 }
-void PGMimageProcessor::printComponentData(const ConnectedComponent &theComponent) const
+void PGMimageProcessor::printComponentData(const connectedComponent &theComponent) const
 {
     ;
     /* print the data for a component to std::cout

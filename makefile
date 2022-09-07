@@ -9,8 +9,8 @@ SOURCE_FILES= $(wildcard $(SRC)/*.cpp)
 SOURCE_HEADERS = $(wildcard $(SRC)/*.h)
 
 all: CFLAGS += -O2
-all: clean out
-out: $(SOURCE_FILES)
+all: clean test
+test: $(SOURCE_FILES)
 	$(GCC) $(CFLAGS) -o $(TARGET)/findcomp $(SOURCE_FILES) $(SOURCE_HEADERS)
 clean:
 	$(RM) $(TARGET)/*
