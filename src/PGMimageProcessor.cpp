@@ -10,13 +10,25 @@
 #include "PGMimageProcessor.hpp"
 using namespace std;
 
-PGMimageProcessor::PGMimageProcessor(argStructure args)
+PGMimageProcessor::PGMimageProcessor(argStructure inArgs)
 {
-    ;
+    args.inFilename = inArgs.inFilename;
+    args.printArg = inArgs.printArg;
+    args.writeArg = inArgs.writeArg;
+    args.threshArg[0] = inArgs.threshArg[0];
+    for (int i = 0; i < 2; i++)
+    {
+        args.sizeArgs[i] = inArgs.sizeArgs[i];
+    }
+    pgm = (PGMImage *)malloc(sizeof(PGMImage));
+    if (openPGM(pgm, inArgs.inFilename))
+    {
+        closePGM(pgm);
+    }
 }
 PGMimageProcessor::~PGMimageProcessor()
 {
-    ;
+    delete (pgm);
 }
 int PGMimageProcessor::extractComponents(unsigned char threshold, int minValidSize)
 { /* process the input image to extract all the connected components,
@@ -90,4 +102,99 @@ void PGMimageProcessor::printComponentData(const connectedComponent &theComponen
     see ConnectedComponent class;
     print out to std::cout: component ID, number of pixels
     */
+}
+
+bool PGMimageProcessor::writePGM(PGMImage *pgm,
+                                 const char *filename)
+{
+    // write header
+    ofstream myfile(filename, ios::binary);
+    myfile.write("P5\n", 3);
+    myfile.write(to_string(pgm->width).c_str(), to_string(pgm->width).length());
+    myfile.put(' ');
+    myfile.write(to_string(pgm->height).c_str(), to_string(pgm->height).length());
+    myfile.write("\n255\n", 5);
+    // write contents
+    for (int i = 0;
+         i < pgm->height; i++)
+    {
+        myfile.write((char *)pgm->data[i], (pgm->width));
+    }
+    myfile.close();
+    return false;
+}
+void PGMimageProcessor::commentParse(FILE *filePointer)
+{
+    int ch;
+    char line[100];
+    // Ignore any blank lines or comments
+    while ((ch = fgetc(filePointer)) != EOF && isspace(ch))
+    {
+        ;
+    }
+    if (ch == '#')
+    {
+        fgets(line, sizeof(line), filePointer);
+        commentParse(filePointer);
+    }
+    else
+        fseek(filePointer, -1, SEEK_CUR);
+}
+
+bool PGMimageProcessor::openPGM(PGMImage *pgm,
+                                const char *filename)
+{
+    FILE *pgmFile = fopen(filename, "rb");
+    // Check for file
+    if (pgmFile == NULL)
+    {
+        printf("File not found\n");
+        return false;
+    }
+    commentParse(pgmFile);
+
+    // Parse header
+    fscanf(pgmFile, "%s",
+           pgm->pgmType);
+    commentParse(pgmFile);
+    fscanf(pgmFile, "%d %d",
+           &(pgm->width),
+           &(pgm->height));
+    commentParse(pgmFile);
+    fscanf(pgmFile, "%d", &(pgm->maxValue));
+    commentParse(pgmFile);
+
+    // Allocate memory
+    pgm->data = (unsigned char **)malloc(pgm->height * sizeof(unsigned char *));
+    // Store data
+    if (pgm->pgmType[1] == '5')
+    {
+        fgetc(pgmFile);
+        for (int i = 0;
+             i < pgm->height; i++)
+        {
+            pgm->data[i] = (unsigned char *)malloc(pgm->width * sizeof(unsigned char));
+            if (pgm->data[i] == NULL)
+            {
+                fprintf(stderr,
+                        "malloc failed\n");
+                exit(1);
+            }
+            fread(pgm->data[i],
+                  sizeof(unsigned char),
+                  pgm->width, pgmFile);
+        }
+    }
+    fclose(pgmFile);
+    return true;
+}
+void PGMimageProcessor::closePGM(PGMImage *pgm)
+{
+    // deallocate image;
+    for (int i = 0; i < pgm->height; i++)
+    {
+        delete (pgm->data[i]);
+    }
+    delete (pgm->data);
+    return;
 }

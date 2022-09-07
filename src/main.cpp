@@ -9,15 +9,6 @@
 using namespace std;
 
 // ./out/findcomp -s 1 2 -t 3 -p -w out.pgm
-struct argStructure
-{
-    char *inFilename;
-    int argsRead;
-    int sizeArgs[2];
-    int threshArg[1];
-    bool printArg;
-    string writeArg;
-};
 
 bool fileExists(char *fileName)
 {
@@ -59,13 +50,13 @@ bool checkIntArgs(int argNum, int i, char *argv[], int *resArray)
 }
 int main(int argc, char *argv[])
 {
-    // char *inFilename = argv[1];
-    // int argsRead = 2;
-    // int sizeArgs[2];
-    // int threshArg[1];
-    // bool printArg;
-    // string writeArg;
     argStructure args;
+    int argsRead = 2;
+    if (argc < argsRead || ((string)argv[argc - 1]).find(".pgm") == std::string::npos)
+    {
+        badIn();
+    }
+    args.inFilename = argv[argc - 1];
     for (int i = 0; i < 2; i++)
     {
         args.sizeArgs[i] = 0;
@@ -74,8 +65,8 @@ int main(int argc, char *argv[])
     {
         if (strcmp(argv[i], "-t") == 0)
         {
-            args.argsRead += 2;
-            if (argc < args.argsRead)
+            argsRead += 2;
+            if (argc < argsRead)
             {
                 badArg();
             }
@@ -90,8 +81,8 @@ int main(int argc, char *argv[])
         }
         if (strcmp(argv[i], "-s") == 0)
         {
-            args.argsRead += 3;
-            if (argc < args.argsRead)
+            argsRead += 3;
+            if (argc < argsRead)
             {
                 badArg();
             }
@@ -106,8 +97,8 @@ int main(int argc, char *argv[])
         }
         if (strcmp(argv[i], "-w") == 0)
         {
-            args.argsRead++;
-            if (argc < args.argsRead)
+            argsRead++;
+            if (argc < argsRead)
             {
                 badArg();
             }
@@ -115,23 +106,22 @@ int main(int argc, char *argv[])
         }
         if (strcmp(argv[i], "-p") == 0)
         {
-            args.argsRead++;
-            if (argc < args.argsRead)
+            argsRead++;
+            if (argc < argsRead)
             {
                 badArg();
             }
             args.printArg = argv[i + 1];
         }
     }
-    cout << "sArgs:" << endl;
-    for (int i = 0; i < 2; i++)
-    {
-        cout << args.sizeArgs[i] << endl;
-    }
     PGMimageProcessor *a = new PGMimageProcessor(args);
-
-    // a->makeFrames(tResultArr, sResultArr, wResultVecArray, inFilename);
-    // cout << (int)a->imageSequence[0][0][0];
+    a->extractComponents(args.threshArg[0], args.sizeArgs[0]);
+    // a->filterComponentsBySize(3, 200);
+    // cout << a->getComponentCount();
+    // cout << a->getLargestSize();
+    // cout << a->getSmallestSize();
+    // // a->printComponentData(&theComponent);
+    // a->writeComponents(args.writeArg);
     delete (a);
 }
 

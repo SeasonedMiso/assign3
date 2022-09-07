@@ -5,15 +5,22 @@
 #include "connectedComponent.hpp"
 using namespace std;
 
-struct argStructure
+typedef struct argStructure
 {
     char *inFilename;
-    int argsRead;
     int sizeArgs[2];
     int threshArg[1];
     bool printArg;
     string writeArg;
-};
+} argStructure;
+typedef struct PGMImage
+{
+    char pgmType[3];
+    unsigned char **data;
+    unsigned int width;
+    unsigned int height;
+    unsigned int maxValue;
+} PGMImage;
 
 class PGMimageProcessor
 {
@@ -28,9 +35,17 @@ public:
     int getLargestSize(void) const;
     int getSmallestSize(void) const;
     void printComponentData(const connectedComponent &theComponent) const;
+    bool openPGM(PGMImage *pgm,
+                 const char *filename);
+    void commentParse(FILE *filePointer);
+    bool writePGM(PGMImage *pgm,
+                  const char *filename);
+    void closePGM(PGMImage *pgm);
 
 private:
     // container : smart pointers to each ConnectedComponent
+    argStructure args;
+    PGMImage *pgm;
 };
 
 #endif
