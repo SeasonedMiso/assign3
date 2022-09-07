@@ -41,6 +41,8 @@ public:
     bool writePGM(PGMImage *pgm,
                   const char *filename);
     void closePGM(PGMImage *pgm);
+    PGMImage *clonePGM(PGMImage *pgm);
+    void BFS(PGMImage *pgmThresh, int threshold, pair<int, int> coord);
 
 private:
     // container : smart pointers to each ConnectedComponent

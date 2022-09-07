@@ -51,6 +51,12 @@ bool checkIntArgs(int argNum, int i, char *argv[], int *resArray)
 int main(int argc, char *argv[])
 {
     argStructure args;
+    args.printArg = false;
+    args.sizeArgs[0] = 3;
+    // args.sizeArgs[1] = image width*img height i.e. unlimited;
+    args.threshArg[0] = 128;
+    args.writeArg = "output.pgm";
+
     int argsRead = 2;
     if (argc < argsRead || ((string)argv[argc - 1]).find(".pgm") == std::string::npos)
     {
@@ -65,6 +71,7 @@ int main(int argc, char *argv[])
     {
         if (strcmp(argv[i], "-t") == 0)
         {
+            // check that val is between 0 and 255
             argsRead += 2;
             if (argc < argsRead)
             {

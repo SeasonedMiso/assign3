@@ -8,13 +8,22 @@ using namespace std;
 class connectedComponent
 {
 public:
-   connectedComponent();
+   // connectedComponent();
    ~connectedComponent();
+   void printID();
+   void addCoords(pair<int, int> coords);
+   int id;
+   connectedComponent();
+   connectedComponent(const connectedComponent &orig);
+   connectedComponent &operator=(const connectedComponent &orig);
+
+   // void IDincrement();
    // getters and setters
+protected:
+   static int nextID;
 
 private:
    int pixelCount;
-   int componentID;
    vector<pair<int, int>> coordinates;
 };
 #endif
