@@ -2,7 +2,7 @@
 #define PGMimageProcessor_H_
 #include <string>
 #include <vector>
-#include "connectedComponent.hpp"
+#include "ConnectedComponent.hpp"
 using namespace std;
 
 typedef struct argStructure
@@ -34,7 +34,7 @@ public:
     int getComponentCount(void) const;
     int getLargestSize(void) const;
     int getSmallestSize(void) const;
-    void printComponentData(const connectedComponent &theComponent) const;
+    void printComponentData(const ConnectedComponent &theComponent) const;
     bool openPGM(PGMImage *pgm,
                  const char *filename);
     void commentParse(FILE *filePointer);
@@ -42,21 +42,16 @@ public:
                   const char *filename);
     void closePGM(PGMImage *pgm);
     PGMImage *clonePGM(PGMImage *pgm);
-    connectedComponent BFS(PGMImage *pgmThresh, int threshold, pair<int, int> coord);
+    ConnectedComponent *BFS(PGMImage *pgmThresh, int threshold, pair<int, int> coord);
 
 private:
     // container : smart pointers to each ConnectedComponent
     argStructure args;
     PGMImage *pgm;
-    vector<connectedComponent> compVec;
+    vector<ConnectedComponent*> compVec;
 };
 
 #endif
-
-// iterate(with a container iterator) through your collection of detected components
-//     and write them back out to produce a PGM image with only the selected components
-//     present(as pixels values = 255 and all other values set to pixel value = 0)
-//         .
 
 // a copy constructor :
 //        X(const X &)

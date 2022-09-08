@@ -43,12 +43,13 @@ int PGMimageProcessor::extractComponents(unsigned char threshold, int minValidSi
             {
                 pair<int, int> coords = {y, x};
                 compVec.push_back(BFS(copy, (int)threshold, coords));
-                cout << compVec[compVec.size() - 1].getPixelCount() << endl;
+                // cout << compVec.back()->getPixelCount() << endl;
+                // cout << compVec.at(0)->getPixelCount() << endl;
             }
         }
     }
-    cout << "------" << endl;
-    writePGM(copy, "copy.pgm");
+
+    // writePGM(copy, "copy.pgm");
     closePGM(copy);
     delete (copy);
     return 0;
@@ -58,7 +59,7 @@ int PGMimageProcessor::filterComponentsBySize(int minSize, int maxSize)
     int count = 0;
     for (int i = 0; i < compVec.size() - 1; i++)
     {
-        if (compVec[i].getPixelCount() > minSize && compVec[i].getPixelCount() < maxSize)
+        if (compVec.at(i)->getPixelCount() > minSize && compVec.at(i)->getPixelCount() < maxSize)
         {
             count++;
         }
@@ -72,10 +73,10 @@ bool PGMimageProcessor::writeComponents(const string &outFileName)
         PGMImage *copy = clonePGM(pgm);
         for (int i = 0; i < compVec.size() - 1; i++)
         {
-            for (int j = 0; j < compVec[i].getPixelCount() - 1; j++)
+            for (int j = 0; j < compVec.at(i)->getPixelCount() - 1; j++)
             {
 
-                copy->data[compVec[i].getCoords()[j].first][compVec[i].getCoords()[j].second] = (u_char)0;
+                copy->data[compVec.at(i)->getCoords()[j].first][compVec.at(i)->getCoords()[j].second] = (u_char)0;
             }
         }
         writePGM(copy, "out.pgm");
@@ -98,30 +99,26 @@ int PGMimageProcessor::getLargestSize(void) const
     int maxSize = 0;
     for (int i = 0; i < compVec.size() - 1; i++)
     {
-        if (compVec[i].getPixelCount() > maxSize)
+        if (compVec.at(i)->getPixelCount() > maxSize)
         {
-            maxSize = compVec[i].getPixelCount();
+            maxSize = compVec.at(i)->getPixelCount();
         }
-        cout << compVec[i].getPixelCount() << endl;
-        // cout << maxSize << endl;
     }
     return maxSize;
 }
 int PGMimageProcessor::getSmallestSize(void) const
 {
-    int minSize = 0;
-    for (int i = 0; i < compVec.size() - 1; i++)
+    int minSize = compVec.at(0)->getPixelCount();
+    for (int i = 1; i < compVec.size() - 1; i++)
     {
-        if (compVec[i].getPixelCount() < minSize)
+        if (compVec.at(i)->getPixelCount() < minSize)
         {
-            minSize = compVec[i].getPixelCount();
+            minSize = compVec.at(i)->getPixelCount();
         }
-        cout << compVec[i].getPixelCount() << endl;
-        // cout << minSize << endl;
     }
     return minSize;
 }
-void PGMimageProcessor::printComponentData(const connectedComponent &theComponent) const
+void PGMimageProcessor::printComponentData(const ConnectedComponent &theComponent) const
 {
     cout << "id: " << theComponent.id << endl;
     cout << "pixel count: " << theComponent.getPixelCount() << endl;
@@ -237,11 +234,13 @@ PGMImage *PGMimageProcessor::clonePGM(PGMImage *pgm)
     }
     return newPgm;
 }
-connectedComponent PGMimageProcessor::BFS(PGMImage *pgmChecked, int threshold, pair<int, int> coordInit)
+ConnectedComponent *PGMimageProcessor::BFS(PGMImage *pgmChecked, int threshold, pair<int, int> coordInit)
 {
     queue<pair<int, int>> coordQueue;
     coordQueue.push(coordInit);
-    connectedComponent *newCC = new connectedComponent;
+    // mem not allocated?
+    ConnectedComponent *newCC = new ConnectedComponent;
+    // make sure this is deleted at some point
     pair<int, int> coord = coordQueue.front();
     newCC->addCoords({coord.first, coord.second});
     pgmChecked->data[coord.first][coord.second] = (u_char)0;
@@ -285,15 +284,8 @@ connectedComponent PGMimageProcessor::BFS(PGMImage *pgmChecked, int threshold, p
                 pgmChecked->data[coord.first][coord.second - 1] = (u_char)0;
             }
         }
-
-        // pgmChecked->data[coord.first][coord.second] = (u_char)0;
         coordQueue.pop();
-        // if (coordQueue.size() != 0 && pgmChecked->data[coord.first][coord.second] == (u_char)0)
-        // {
-        //     coordQueue.pop();
-        //     coord = coordQueue.front();
-        // }
     }
-    // cout << newCC->getPixelCount() << endl;
-    return *newCC;
+    cout << "in loop: " << newCC->getPixelCount() << endl;
+    return newCC;
 }
