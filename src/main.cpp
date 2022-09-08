@@ -127,8 +127,8 @@ int main(int argc, char *argv[])
     // cout << a->getLargestSize() << endl;
     // cout << a->getSmallestSize() << endl;
     // a->printComponentData(&theComponent);
-    // a->filterComponentsBySize(3, 200);
-    a->writeComponents(args.writeArg);
+    // cout << a->filterComponentsBySize(3, 200) << endl;
+    cout << a->writeComponents(args.writeArg);
     delete (a);
 }
 
