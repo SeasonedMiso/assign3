@@ -24,7 +24,10 @@ PGMimageProcessor::PGMimageProcessor(argStructure inArgs)
     pgm = (PGMImage *)malloc(sizeof(PGMImage));
     if (openPGM(pgm, inArgs.inFilename))
     {
-        ;
+        if (args.sizeArgs[1] == 0)
+        {
+            args.sizeArgs[1] = pgm->height * pgm->width;
+        }
     }
 }
 PGMimageProcessor::~PGMimageProcessor()

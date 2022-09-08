@@ -53,7 +53,7 @@ int main(int argc, char *argv[])
     argStructure args;
     args.printArg = false;
     args.sizeArgs[0] = 3;
-    // args.sizeArgs[1] = image width*img height i.e. unlimited;
+    args.sizeArgs[1] = 0;
     args.threshArg[0] = 128;
     args.writeArg = "output.pgm";
 
