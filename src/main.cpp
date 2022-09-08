@@ -123,12 +123,12 @@ int main(int argc, char *argv[])
     }
     PGMimageProcessor *a = new PGMimageProcessor(args);
     a->extractComponents(args.threshArg[0], args.sizeArgs[0]);
-    // a->filterComponentsBySize(3, 200);
     // cout << a->getComponentCount();
     // cout << a->getLargestSize();
     // cout << a->getSmallestSize();
     // a->printComponentData(&theComponent);
-    // a->writeComponents(args.writeArg);
+    // cout << a->filterComponentsBySize(3, 200);
+    a->writeComponents(args.writeArg);
     delete (a);
 }
 

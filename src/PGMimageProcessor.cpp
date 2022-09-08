@@ -35,20 +35,19 @@ PGMimageProcessor::~PGMimageProcessor()
 int PGMimageProcessor::extractComponents(unsigned char threshold, int minValidSize)
 {
     PGMImage *copy = clonePGM(pgm);
-
     for (int y = 0; y < pgm->height; y++)
     {
         for (int x = 0; x < pgm->width; x++)
         {
-
             if ((int)pgm->data[y][x] >= (int)threshold && copy->data[y][x] == 255)
             {
                 pair<int, int> coords = {y, x};
-                // BFS(copy, (int)threshold, coords);
                 compVec.push_back(BFS(copy, (int)threshold, coords));
+                cout << compVec[compVec.size() - 1].getPixelCount() << endl;
             }
         }
     }
+    cout << "------" << endl;
     writePGM(copy, "copy.pgm");
     closePGM(copy);
     delete (copy);
@@ -56,62 +55,76 @@ int PGMimageProcessor::extractComponents(unsigned char threshold, int minValidSi
 }
 int PGMimageProcessor::filterComponentsBySize(int minSize, int maxSize)
 {
-    ;
-    /* iterate - with an iterator - though your container of connected
-components and filter out (remove) all the components which do not
-obey the size criteria pass as arguments. The number remaining
-after this operation should be returned.
-*/
-    return 0;
+    int count = 0;
+    for (int i = 0; i < compVec.size() - 1; i++)
+    {
+        if (compVec[i].getPixelCount() > minSize && compVec[i].getPixelCount() < maxSize)
+        {
+            count++;
+        }
+    }
+    return count;
 }
 bool PGMimageProcessor::writeComponents(const string &outFileName)
 {
-    // return error if not made
-    // take all black pmg, take each coord from component, set to white, print
-    // for (int i = 0; i < compVec.size() - 1; i++)
-    // {
+    try
+    {
+        PGMImage *copy = clonePGM(pgm);
+        for (int i = 0; i < compVec.size() - 1; i++)
+        {
+            for (int j = 0; j < compVec[i].getPixelCount() - 1; j++)
+            {
 
-    // }
-    /* create a new PGM file which contains all current components
-(255=component pixel, 0 otherwise) and write this to outFileName as a
-valid PGM. the return value indicates success of operation
-*/
-    return false;
+                copy->data[compVec[i].getCoords()[j].first][compVec[i].getCoords()[j].second] = (u_char)0;
+            }
+        }
+        writePGM(copy, "out.pgm");
+        closePGM(copy);
+        delete (copy);
+        return true;
+    }
+    catch (const std::exception &e)
+    {
+        std::cerr << e.what() << '\n';
+        return false;
+    }
 }
 int PGMimageProcessor::getComponentCount(void) const
 {
-    ;
-    // return number of components
-    return 0;
+    return compVec.size();
 }
 int PGMimageProcessor::getLargestSize(void) const
 {
-    ;
-    // return number of pixels in largest component
-    return 0;
+    int maxSize = 0;
+    for (int i = 0; i < compVec.size() - 1; i++)
+    {
+        if (compVec[i].getPixelCount() > maxSize)
+        {
+            maxSize = compVec[i].getPixelCount();
+        }
+        cout << compVec[i].getPixelCount() << endl;
+        // cout << maxSize << endl;
+    }
+    return maxSize;
 }
 int PGMimageProcessor::getSmallestSize(void) const
 {
-    ;
-    // return number of pixels in smallest component
-    return 0;
+    int minSize = 0;
+    for (int i = 0; i < compVec.size() - 1; i++)
+    {
+        if (compVec[i].getPixelCount() < minSize)
+        {
+            minSize = compVec[i].getPixelCount();
+        }
+        cout << compVec[i].getPixelCount() << endl;
+        // cout << minSize << endl;
+    }
+    return minSize;
 }
 void PGMimageProcessor::printComponentData(const connectedComponent &theComponent) const
 {
-    cout << theComponent.getPixelCount();
-    for (int i = 0; i < theComponent.getPixelCount() - 1; i++)
-    {
-        cout << "y:" << theComponent.getCoords()[i].first << " x: " << theComponent.getCoords()[i].second << endl;
-    }
-
-    // cout << theComponent.getCoords();
-
-    // cout
-    // << theComponent.getPixelCount();
-    /* print the data for a component to std::cout
-    see ConnectedComponent class;
-    print out to std::cout: component ID, number of pixels
-    */
+    cout << "id: " << theComponent.id << endl;
+    cout << "pixel count: " << theComponent.getPixelCount() << endl;
 }
 
 bool PGMimageProcessor::writePGM(PGMImage *pgm,
@@ -150,7 +163,6 @@ void PGMimageProcessor::commentParse(FILE *filePointer)
     else
         fseek(filePointer, -1, SEEK_CUR);
 }
-
 bool PGMimageProcessor::openPGM(PGMImage *pgm,
                                 const char *filename)
 {
@@ -208,7 +220,6 @@ void PGMimageProcessor::closePGM(PGMImage *pgm)
     delete (pgm->data);
     return;
 }
-
 PGMImage *PGMimageProcessor::clonePGM(PGMImage *pgm)
 {
     PGMImage *newPgm = (PGMImage *)malloc(sizeof(PGMImage));
@@ -226,16 +237,6 @@ PGMImage *PGMimageProcessor::clonePGM(PGMImage *pgm)
     }
     return newPgm;
 }
-// PGMImage *PGMimageProcessor::clonePGM(PGMImage *pgm)
-// {
-//     PGMImage *newPgm = (PGMImage *)malloc(sizeof(PGMImage));
-//     newPgm->data = (unsigned char **)malloc(pgm->height * sizeof(unsigned char *));
-//     for (int i = 0; i < pgm->height; i++)
-//     {
-//         newPgm->data[i] = (unsigned char *)malloc(pgm->width * sizeof(unsigned char));
-//     }
-// }
-
 connectedComponent PGMimageProcessor::BFS(PGMImage *pgmChecked, int threshold, pair<int, int> coordInit)
 {
     queue<pair<int, int>> coordQueue;
@@ -284,6 +285,7 @@ connectedComponent PGMimageProcessor::BFS(PGMImage *pgmChecked, int threshold, p
                 pgmChecked->data[coord.first][coord.second - 1] = (u_char)0;
             }
         }
+
         // pgmChecked->data[coord.first][coord.second] = (u_char)0;
         coordQueue.pop();
         // if (coordQueue.size() != 0 && pgmChecked->data[coord.first][coord.second] == (u_char)0)
@@ -292,5 +294,6 @@ connectedComponent PGMimageProcessor::BFS(PGMImage *pgmChecked, int threshold, p
         //     coord = coordQueue.front();
         // }
     }
+    // cout << newCC->getPixelCount() << endl;
     return *newCC;
 }
