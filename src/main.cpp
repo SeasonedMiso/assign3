@@ -1,4 +1,4 @@
-// #include ".hpp"
+
 #include <iostream>
 #include <string>
 #include <sstream>
@@ -7,8 +7,6 @@
 #include "PGMimageProcessor.hpp"
 
 using namespace std;
-
-// ./out/findcomp -s 1 2000 -t 100 -p -w out.pgm
 
 bool fileExists(char *fileName)
 {
