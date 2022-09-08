@@ -1,32 +1,26 @@
 # assign3
 
-explaining what each file submitted does and
-how it fits into the program as a whole.
+-s <int> <int> (-s min max) ; set the minimum and maximum valid components size
+[min default = 3, max = image width*img height i.e. unlimited]
+
+-p print out all the component data (entries do not have to be sorted) as well as the total
+component number and the sizes of the smallest and largest components.
 
 ---
 
-For this assignment, you are given a greyscale input image (PGM) and asked to provide
-an image processing class that can extract all the connected components for the image,
-given some user-supplied threshold. A connected component is a collection of image pixels
-which ‘touch’ each other. There are two categories of connectedness — but here we are
-concerned only with 4-connected pixels. These are foreground pixels which are connected
-to each other if they have a foreground neighbour to the N, E, S or W (any of these
-cases means they are connected). An approach to extracting these is provided later in the
-description. In the PGM image below, a particular intensity threshold has resulted in the
-binary image on the right. You can see that most of the foreground pixels are connected in
-one large component that includes the cameraman and the tripod, but also includes other
-features like background buildings. There are also larger separate components and many
-(low pixel count) ‘noise’ components. A single isolated foreground pixel is still considered
-a component — however, see the full problem description for how we might change this.
+explaining what each file submitted does and
+how it fits into the program as a whole.
 
-Remember that for move semantics to work effectively, the class types you define must
-be ‘movable’. This is particularly important when you use a C++ container of smart
-pointers, since a new class instance will often need to be ‘moved’ into a container element
-by (move) assignment.
+main.cpp takes user input, and makes sure it is valid, then creates an instance of the PGMimageProcessor class, and calls various methods from it.
+
+The PGMimageProcessor.cpp contains all of the neccessary methods to parse a PGM file, extract components, and write it back out, as well as methods to return the maximum or minimum size components extracted, or return the number of components within a size range.
+
+The components themselves are defined in ConnectedComponents.cpp, which defines unique id numbers for each component as well as methods to add new coordinates, and get the total number of coordinates in the object.
 
 unit tests
 catch.hpp
 
+Data Flow
 ---basic
 
 user
@@ -50,31 +44,11 @@ w = string outFilename
 
 getInputFile
 ↓
-extract connectedComponents //store smart pointer in connectedComponentsContainer
-↓
-filterComponentsBySize
+extract connectedComponents //pointers in connectedComponentsContainer
 ↓
 {writeComponents(const std::string & outFileName);
 getComponentCount(void)
 getLargestSize
 getSmallestSize
-printComponentData}
-
---
-Extract//
-The easiest is to start at the top left pixel of the
-image and scan along the image rows until you hit a foreground pixel. At that point
-you can start a Breadth First Search (BFS) to determine all 4-connected foreground
-pixels that are attached to this (this is effectively a ‘floodfill’ algorithm). Essentially,
-you check all possible 4-connected neighbours (N/S/E/W) and if a neighbour is 255, and
-not yet processed, add it to your component, pushing it’s non-tested N/S/E/W neighbour
-coordinates onto a queue (initially empty). You need to take care to set the current
-foreground pixel added to your component to 0 in the thresholded image, so you don’t
-revisit it. The BFS continues, popping off candidate pixel coordinates from the queue,
-and expanding/testing those, until the queue has been exhausted. Then you can continue
-scanning from where you initially started building the component, looking for the starting
-‘seed’ for next component. Each new component should increase the component identifier
-(just start at 0). You can optimize the process described above, but it should work well
-enough as is. Once you have extracted the components, you should delete the
-memory used to hold the PGM input image, UNLESS you re-use the memory
-to create the output image.
+printComponentData
+filterComponentsBySize}

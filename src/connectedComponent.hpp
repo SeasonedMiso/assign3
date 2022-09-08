@@ -8,7 +8,7 @@ using namespace std;
 class ConnectedComponent
 {
 public:
-   // ConnectedComponent();
+   ConnectedComponent();
    ~ConnectedComponent();
    void addCoords(pair<int, int> coords);
    int id;
@@ -17,8 +17,7 @@ public:
    ConnectedComponent();
    ConnectedComponent(const ConnectedComponent &orig);
    ConnectedComponent &operator=(const ConnectedComponent &orig);
-   // void IDincrement();
-   // getters and setters
+
 protected:
    static int nextID;
 
