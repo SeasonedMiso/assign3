@@ -1,13 +1,5 @@
 # assign3
 
--p print out all the component data (entries do not have to be sorted) as well as the total
-component number and the sizes of the smallest and largest components.
-
----
-
-explaining what each file submitted does and
-how it fits into the program as a whole.
-
 main.cpp takes user input, and makes sure it is valid, then creates an instance of the PGMimageProcessor class, and calls various methods from it.
 
 The PGMimageProcessor.cpp contains all of the neccessary methods to parse a PGM file, extract components, and write it back out, as well as methods to return the maximum or minimum size components extracted, or return the number of components within a size range.
@@ -16,6 +8,11 @@ The components themselves are defined in ConnectedComponents.cpp, which defines 
 
 unit tests
 catch.hpp
+
+example input:
+./out/findcomp - s 1 200000 - t 199 - p - w out.pgm ./resources/examples/penguin.pgm
+
+---
 
 Data Flow
 ---basic
@@ -30,7 +27,7 @@ PGMimageProcessor
 -
 
 where:
-args ={
+args = {
 s = [int minSize, int maxSize],
 t = int detectionThresh,
 p = bool print?,
@@ -41,9 +38,9 @@ w = string outFilename
 
 getInputFile
 ↓
-extract connectedComponents //pointers in connectedComponentsContainer
+extract connectedComponents // pointers in connectedComponentsContainer
 ↓
-{writeComponents(const std::string & outFileName);
+{writeComponents(const std: : string & outFileName)
 getComponentCount(void)
 getLargestSize
 getSmallestSize

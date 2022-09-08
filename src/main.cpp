@@ -126,9 +126,10 @@ int main(int argc, char *argv[])
     cout << "Component count: " << a->getComponentCount() << endl;
     cout << "Largest component: " << a->getLargestSize() << endl;
     cout << "Smallest component: " << a->getSmallestSize() << endl;
-    // a->printComponentData(&theComponent);
     cout << "Components within filter range: " << a->filterComponentsBySize(3, 200) << endl;
-    cout << "Write succesful?: " << a->writeComponents(args.writeArg);
+    string writeSuccess = (a->writeComponents(args.writeArg)) ? "Write success" : "Write failed";
+    cout << writeSuccess;
+    // cout << "Write succesful?: " << a->writeComponents(args.writeArg);
     delete (a);
 }
 
