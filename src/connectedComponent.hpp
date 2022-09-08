@@ -14,7 +14,6 @@ public:
    int id;
    int getPixelCount() const;
    vector<pair<int, int>> getCoords() const;
-   ConnectedComponent();
    ConnectedComponent(const ConnectedComponent &orig);
    ConnectedComponent &operator=(const ConnectedComponent &orig);
 

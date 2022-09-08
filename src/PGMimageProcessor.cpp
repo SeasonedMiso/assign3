@@ -46,7 +46,15 @@ int PGMimageProcessor::extractComponents(unsigned char threshold, int minValidSi
             if ((int)pgm->data[y][x] >= (int)threshold && copy->data[y][x] == 255)
             {
                 pair<int, int> coords = {y, x};
-                compVec.push_back(BFS(copy, (int)threshold, coords));
+                ConnectedComponent *buffer = BFS(copy, (int)threshold, coords);
+                if (buffer->getPixelCount() >= args.sizeArgs[0] && buffer->getPixelCount() <= args.sizeArgs[1])
+                {
+                    compVec.push_back(buffer);
+                }
+                else
+                {
+                    delete (buffer);
+                }
             }
         }
     }
