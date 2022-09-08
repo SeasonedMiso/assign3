@@ -36,4 +36,13 @@ connectedComponent::~connectedComponent()
 void connectedComponent::addCoords(pair<int, int> coords)
 {
     coordinates.push_back(coords);
+    pixelCount++;
+}
+int connectedComponent::getPixelCount() const
+{
+    return pixelCount;
+}
+vector<pair<int, int>> connectedComponent::getCoords() const
+{
+    return coordinates;
 }

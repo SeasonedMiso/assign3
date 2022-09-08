@@ -10,13 +10,13 @@ class connectedComponent
 public:
    // connectedComponent();
    ~connectedComponent();
-   void printID();
    void addCoords(pair<int, int> coords);
    int id;
+   int getPixelCount() const;
+   vector<pair<int, int>> getCoords() const;
    connectedComponent();
    connectedComponent(const connectedComponent &orig);
    connectedComponent &operator=(const connectedComponent &orig);
-
    // void IDincrement();
    // getters and setters
 protected:

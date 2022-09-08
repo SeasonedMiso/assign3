@@ -30,7 +30,7 @@ public:
     ~PGMimageProcessor();
     int extractComponents(unsigned char threshold, int minValidSize);
     int filterComponentsBySize(int minSize, int maxSize);
-    bool writeComponents(const std::string &outFileName);
+    bool writeComponents(const string &outFileName);
     int getComponentCount(void) const;
     int getLargestSize(void) const;
     int getSmallestSize(void) const;
@@ -42,12 +42,13 @@ public:
                   const char *filename);
     void closePGM(PGMImage *pgm);
     PGMImage *clonePGM(PGMImage *pgm);
-    void BFS(PGMImage *pgmThresh, int threshold, pair<int, int> coord);
+    connectedComponent BFS(PGMImage *pgmThresh, int threshold, pair<int, int> coord);
 
 private:
     // container : smart pointers to each ConnectedComponent
     argStructure args;
     PGMImage *pgm;
+    vector<connectedComponent> compVec;
 };
 
 #endif

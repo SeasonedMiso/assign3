@@ -24,64 +24,34 @@ PGMimageProcessor::PGMimageProcessor(argStructure inArgs)
     pgm = (PGMImage *)malloc(sizeof(PGMImage));
     if (openPGM(pgm, inArgs.inFilename))
     {
-        closePGM(pgm);
+        ;
     }
 }
 PGMimageProcessor::~PGMimageProcessor()
 {
+    closePGM(pgm);
     delete (pgm);
 }
 int PGMimageProcessor::extractComponents(unsigned char threshold, int minValidSize)
 {
     PGMImage *copy = clonePGM(pgm);
 
-    pair<int, int> coordinate = {20, 20};
-    BFS(copy, (int)threshold, coordinate);
-    // for (int y = 0; y < pgm->height; y++)
-    // {
-    //     for (int x = 0; x < pgm->width; x++)
-    //     {
-    //         // copy pgm
-    //         if ((int)pgm->data[y][x] >= (int)threshold)
-    //         {
-    //             // conenctedCoords coordinates
-    // pair<int, int> coordinate = {y, x};
-    // BFS(copy, (int)threshold, coordinate);
-    //         }
-    //         // inputs >= threshold value
-    //     }
-    //     // closePGM(copy);
-    //     // delete (copy);
-    // }
-    // start at the top left pixel of the image
-    // scan along the image rows until you hit a foreground pixel
-    // start a Breadth First Search (BFS):
-    // determine all 4-connected foreground pixels that are attached to this
-    // (this is effectively a ‘floodfill’ algorithm).
-    // you check all possible 4-connected neighbours (N/S/E/W)
-    // if a neighbour is 255, and not yet processed,
-    // add it to your component, pushing it’s non-tested N/S/E/W neighbour
-    // coordinates onto a queue (initially empty).
-    // set the current foreground pixel added to your component to 0 in the thresholded image
-    //  The BFS continues, popping off candidate pixel coordinates from the queue,
-    // and expanding/testing those, until the queue has been exhausted.
+    for (int y = 0; y < pgm->height; y++)
+    {
+        for (int x = 0; x < pgm->width; x++)
+        {
 
-    // Then you can continue
-    // scanning from where you initially started building the component, looking for the starting
-    // ‘seed’ for next component. Each new component should increase the component identifier
-    // (just start at 0). You can optimize the process described above, but it should work well
-    // enough as is. Once you have extracted the components, you should delete the
-    // memory used to hold the PGM input image, UNLESS you re-use the memory
-    // to create the output image.
-
-    /* process the input image to extract all the connected components,
-based on the supplied threshold (0...255) and excluding any components
-of less than the minValidSize. The final number of components that
-you store in your container (after discarding undersized one)
-must be returned.
-*/
-
-    ;
+            if ((int)pgm->data[y][x] >= (int)threshold && copy->data[y][x] == 255)
+            {
+                pair<int, int> coords = {y, x};
+                // BFS(copy, (int)threshold, coords);
+                compVec.push_back(BFS(copy, (int)threshold, coords));
+            }
+        }
+    }
+    writePGM(copy, "copy.pgm");
+    closePGM(copy);
+    delete (copy);
     return 0;
 }
 int PGMimageProcessor::filterComponentsBySize(int minSize, int maxSize)
@@ -94,9 +64,14 @@ after this operation should be returned.
 */
     return 0;
 }
-bool PGMimageProcessor::writeComponents(const std::string &outFileName)
+bool PGMimageProcessor::writeComponents(const string &outFileName)
 {
-    ;
+    // return error if not made
+    // take all black pmg, take each coord from component, set to white, print
+    // for (int i = 0; i < compVec.size() - 1; i++)
+    // {
+
+    // }
     /* create a new PGM file which contains all current components
 (255=component pixel, 0 otherwise) and write this to outFileName as a
 valid PGM. the return value indicates success of operation
@@ -123,7 +98,16 @@ int PGMimageProcessor::getSmallestSize(void) const
 }
 void PGMimageProcessor::printComponentData(const connectedComponent &theComponent) const
 {
-    ;
+    cout << theComponent.getPixelCount();
+    for (int i = 0; i < theComponent.getPixelCount() - 1; i++)
+    {
+        cout << "y:" << theComponent.getCoords()[i].first << " x: " << theComponent.getCoords()[i].second << endl;
+    }
+
+    // cout << theComponent.getCoords();
+
+    // cout
+    // << theComponent.getPixelCount();
     /* print the data for a component to std::cout
     see ConnectedComponent class;
     print out to std::cout: component ID, number of pixels
@@ -228,6 +212,9 @@ void PGMimageProcessor::closePGM(PGMImage *pgm)
 PGMImage *PGMimageProcessor::clonePGM(PGMImage *pgm)
 {
     PGMImage *newPgm = (PGMImage *)malloc(sizeof(PGMImage));
+    newPgm->height = pgm->height;
+    newPgm->maxValue = pgm->maxValue;
+    newPgm->width = pgm->width;
     newPgm->data = (unsigned char **)malloc(pgm->height * sizeof(unsigned char *));
     for (int i = 0; i < pgm->height; i++)
     {
@@ -248,52 +235,62 @@ PGMImage *PGMimageProcessor::clonePGM(PGMImage *pgm)
 //         newPgm->data[i] = (unsigned char *)malloc(pgm->width * sizeof(unsigned char));
 //     }
 // }
-void PGMimageProcessor::BFS(PGMImage *pgmChecked, int threshold, pair<int, int> coordInit)
+
+connectedComponent PGMimageProcessor::BFS(PGMImage *pgmChecked, int threshold, pair<int, int> coordInit)
 {
     queue<pair<int, int>> coordQueue;
     coordQueue.push(coordInit);
-    // pgm[coord.second][coord.first];
-    // pgmChecked->data[coord.second][coord.first] = (u_char)0;
     connectedComponent *newCC = new connectedComponent;
-    // queue
-    pgmChecked->data[coordInit.first][coordInit.second] = (u_char)0;
+    pair<int, int> coord = coordQueue.front();
+    newCC->addCoords({coord.first, coord.second});
+    pgmChecked->data[coord.first][coord.second] = (u_char)0;
+
     while (coordQueue.size() > 0)
     {
-        pair<int, int> coord = coordQueue.front();
-        // check not gong out of data bounds
-        if ((coord.first + 1 <= pgmChecked->width) && (pgmChecked->data[coord.first + 1][coord.second] == (u_char)255) && ((int)pgm->data[coord.first + 1][coord.second] <= threshold))
+        coord = coordQueue.front();
+        if ((coord.first + 1 < pgmChecked->height - 1))
         {
-            pgmChecked->data[coord.first][coord.second] = (u_char)0;
-            newCC->addCoords({coord.first + 1, coord.second});
-            coordQueue.push({coord.first + 1, coord.second});
+            if ((pgmChecked->data[coord.first + 1][coord.second] == (u_char)255) && ((int)pgm->data[coord.first + 1][coord.second] >= threshold))
+            {
+                newCC->addCoords({coord.first + 1, coord.second});
+                coordQueue.push({coord.first + 1, coord.second});
+                pgmChecked->data[coord.first + 1][coord.second] = (u_char)0;
+            }
         }
-        cout << coordQueue.back().first << " " << coordQueue.back().second << endl;
-        if ((coord.first - 1 >= 0) && (pgmChecked->data[coord.first - 1][coord.second] == (u_char)255) && ((int)pgm->data[coord.first - 1][coord.second] <= threshold))
+        if ((coord.first - 1 > 0))
         {
-            pgmChecked->data[coord.first - 1][coord.second] = (u_char)0;
-            newCC->addCoords({coord.first - 1, coord.second});
-            coordQueue.push({coord.first - 1, coord.second});
+            if ((pgmChecked->data[coord.first - 1][coord.second] == (u_char)255) && ((int)pgm->data[coord.first - 1][coord.second] >= threshold))
+            {
+                newCC->addCoords({coord.first - 1, coord.second});
+                coordQueue.push({coord.first - 1, coord.second});
+                pgmChecked->data[coord.first - 1][coord.second] = (u_char)0;
+            }
         }
-        cout << coordQueue.back().first << " " << coordQueue.back().second << endl;
-        if ((coord.second + 1 <= pgmChecked->height) && (pgmChecked->data[coord.first][coord.second + 1] == (u_char)255) && ((int)pgm->data[coord.first][coord.second + 1] <= threshold))
+        if (coord.second + 1 < pgmChecked->width - 1)
         {
-            pgmChecked->data[coord.first][coord.second + 1] = (u_char)0;
-            newCC->addCoords({coord.first, coord.second + 1});
-            coordQueue.push({coord.first, coord.second + 1});
+            if ((pgmChecked->data[coord.first][coord.second + 1] == (u_char)255) && ((int)pgm->data[coord.first][coord.second + 1] >= threshold))
+            {
+                newCC->addCoords({coord.first, coord.second + 1});
+                coordQueue.push({coord.first, coord.second + 1});
+                pgmChecked->data[coord.first][coord.second + 1] = (u_char)0;
+            }
         }
-        cout << coordQueue.back().first << " " << coordQueue.back().second << endl;
-        if ((coord.second - 1 >= 0) && (pgmChecked->data[coord.first][coord.second - 1] == (u_char)255) && ((int)pgm->data[coord.first][coord.second - 1] <= threshold))
+        if (coord.second - 1 > 0)
         {
-            pgmChecked->data[coord.first][coord.second - 1] = (u_char)0;
-            newCC->addCoords({coord.first, coord.second - 1});
-            coordQueue.push({coord.first, coord.second - 1});
+            if ((pgmChecked->data[coord.first][coord.second - 1] == (u_char)255) && ((int)pgm->data[coord.first][coord.second - 1] >= threshold))
+            {
+                newCC->addCoords({coord.first, coord.second - 1});
+                coordQueue.push({coord.first, coord.second - 1});
+                pgmChecked->data[coord.first][coord.second - 1] = (u_char)0;
+            }
         }
+        // pgmChecked->data[coord.first][coord.second] = (u_char)0;
         coordQueue.pop();
-        // cout << coordQueue.back().first
-        cout << coordQueue.back().first << " " << coordQueue.back().second << endl;
-
-        // check all 4 directions for if not checked and if above threshold
-        // add it to your component,
-        // pushing it’s non - tested N / S / E / W neighbour coordinates onto a queue(initially empty).
+        // if (coordQueue.size() != 0 && pgmChecked->data[coord.first][coord.second] == (u_char)0)
+        // {
+        //     coordQueue.pop();
+        //     coord = coordQueue.front();
+        // }
     }
+    return *newCC;
 }

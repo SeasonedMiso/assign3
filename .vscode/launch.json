@@ -1,0 +1,40 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "(lldb) Launch",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/out/findcomp",
+      "args": [
+        "./out/findcomp",
+        "-s",
+        1,
+        200,
+        "-t",
+        128,
+        "-w",
+        "-p",
+        "abc.pgm",
+        "./resources/examples/penguin.pgm"
+      ],
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}",
+      "environment": [],
+      "externalConsole": true,
+      "MIMode": "lldb",
+      "preLaunchTask": "debug"
+    },
+    {
+      "name": "C/C++ Runner: Debug Session",
+      "type": "lldb",
+      "request": "launch",
+      "args": [],
+      "stopAtEntry": true,
+      "externalConsole": false,
+      "cwd": "/Users/zakwren/Coding/cpp/Assign2/out",
+      "program": "/Users/zakwren/Coding/cpp/Assign2/out/build/Debug/outDebug",
+      "MIMode": "gdb"
+    }
+  ]
+}

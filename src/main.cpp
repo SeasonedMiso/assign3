@@ -127,7 +127,7 @@ int main(int argc, char *argv[])
     // cout << a->getComponentCount();
     // cout << a->getLargestSize();
     // cout << a->getSmallestSize();
-    // // a->printComponentData(&theComponent);
+    // a->printComponentData(&theComponent);
     // a->writeComponents(args.writeArg);
     delete (a);
 }
