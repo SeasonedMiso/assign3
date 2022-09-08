@@ -1,8 +1,5 @@
 # assign3
 
--s <int> <int> (-s min max) ; set the minimum and maximum valid components size
-[min default = 3, max = image width*img height i.e. unlimited]
-
 -p print out all the component data (entries do not have to be sorted) as well as the total
 component number and the sizes of the smallest and largest components.
 

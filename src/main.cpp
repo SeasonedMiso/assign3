@@ -8,7 +8,7 @@
 
 using namespace std;
 
-// ./out/findcomp -s 1 2 -t 3 -p -w out.pgm
+// ./out/findcomp -s 1 2000 -t 100 -p -w out.pgm
 
 bool fileExists(char *fileName)
 {
@@ -118,7 +118,7 @@ int main(int argc, char *argv[])
             {
                 badArg();
             }
-            args.printArg = argv[i + 1];
+            args.printArg = true;
         }
     }
     PGMimageProcessor *a = new PGMimageProcessor(args);

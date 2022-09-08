@@ -15,6 +15,7 @@ ConnectedComponent::ConnectedComponent()
 {
     pixelCount = 0;
     vector<pair<int, int>> coordinates;
+    id = ++nextID;
 }
 ConnectedComponent::ConnectedComponent(const ConnectedComponent &orig)
 {

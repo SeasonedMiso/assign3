@@ -53,6 +53,10 @@ int PGMimageProcessor::extractComponents(unsigned char threshold, int minValidSi
                 if (buffer->getPixelCount() >= args.sizeArgs[0] && buffer->getPixelCount() <= args.sizeArgs[1])
                 {
                     compVec.push_back(buffer);
+                    if (args.printArg)
+                    {
+                        printComponentData(*buffer);
+                    }
                 }
                 else
                 {
